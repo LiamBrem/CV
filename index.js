@@ -14,7 +14,6 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-camera.position.set(10, 10, 10);
 
 //renderer
 const renderer = new THREE.WebGLRenderer({
@@ -46,7 +45,7 @@ const pointLight = new THREE.PointLight(0xffffff);
 pointLight.position.set(0, 0, 0);
 
 const light = new THREE.AmbientLight(0xffffff, 0.5);
-scene.add(pointLight, light);
+scene.add(light, pointLight);
 
 /*
 //light helpers
@@ -83,29 +82,31 @@ for (let i = 0; i < 500; i++) {
 //scene.background = spaceTexture;
 
 //moon
-const moonTexture = new THREE.TextureLoader().load("moon.jpg");
-const normalTexture = new THREE.TextureLoader().load("normal.jpg");
+//const moonTexture = new THREE.TextureLoader().load("/dist/assets/moon.jpg");
+//const normalTexture = new THREE.TextureLoader().load("/dist/assets/normal.jpg");
 
-const moon = new THREE.Mesh(
-  new THREE.SphereGeometry(3, 32, 32),
-  new THREE.MeshStandardMaterial({
-    map: moonTexture,
-    normalMap: normalTexture,
+const object = new THREE.Mesh(
+  new THREE.TorusKnotGeometry(5, 1.5, 74, 8, 2, 3),
+  new THREE.MeshBasicMaterial({
+    color: 0x6bcff6,
+    wireframe: true,
   })
 );
 
-scene.add(moon);
-moon.position.z = 5;
-moon.position.x = -4;
+scene.add(object);
+object.position.z = -10;
+object.position.x = 8;
 
 function moveCamera() {
   //where the user is currently scrolled to
 
   const t = document.body.getBoundingClientRect().top;
 
-  camera.position.z = t * 0.01;
+  camera.position.z = t * -0.01;
   camera.position.x = t * -0.0002;
   camera.position.y = t * -0.0002;
+
+  console.log(t);
 }
 
 document.body.onscroll = moveCamera;
@@ -114,7 +115,7 @@ moveCamera();
 //game loop
 function animate() {
   requestAnimationFrame(animate);
-  moon.rotation.y += 0.05;
+  object.rotation.y += 0.05;
 
   /*
   torus.rotation.x += 0.0;
