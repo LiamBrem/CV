@@ -88,40 +88,72 @@ for (let i = 0; i < 500; i++) {
 const object = new THREE.Mesh(
   new THREE.TorusKnotGeometry(5, 1.5, 74, 8, 2, 3),
   new THREE.MeshBasicMaterial({
-    color: 0x6bcff6,
+    color: 0x3f00cc,
     wireframe: true,
   })
 );
 
 scene.add(object);
-object.position.z = -10;
-object.position.x = 8;
 
-function moveCamera() {
-  //where the user is currently scrolled to
+const center = new THREE.Vector3(0, 0, 0);
 
-  const t = document.body.getBoundingClientRect().top;
+let radius = 25;
+let angle = 0;
+updateCamera();
 
-  camera.position.z = t * -0.01;
-  camera.position.x = t * -0.0002;
-  camera.position.y = t * -0.0002;
+// Function to update the camera position and look at the center point
+function updateCamera() {
+  // Calculate the new camera position
+  let x = center.x + radius * Math.cos(angle);
+  let z = center.z + radius * Math.sin(angle);
+  let y = 0;
 
-  console.log(t);
+  // Update the camera position
+  camera.position.set(x, y, z);
+
+  // Update the camera's "look at" point
+  camera.lookAt(center);
 }
 
-document.body.onscroll = moveCamera;
-moveCamera();
+// Function to handle scroll events
+function handleScroll(event) {
+  // Adjust the radius based on the scroll delta
+  angle += event.deltaY * 0.001; // Adjust the scroll sensitivity as needed
+
+  // Limit the minimum and maximum radius values if desired
+  // radius = Math.max(radius, minRadius);
+  // radius = Math.min(radius, maxRadius);
+
+  // Update the camera position
+  updateCamera();
+}
+
+let mouseX = 0;
+let mouseY = 0;
+
+// Function to handle mouse movement
+function onMouseMove(event) {
+  // Calculate the normalized device coordinates (-1 to +1) based on the mouse position
+  mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+  mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+}
+
+// Add event listener for mouse movement
+document.addEventListener("mousemove", onMouseMove, false);
+
+//scroll event listener
+window.addEventListener("wheel", handleScroll);
 
 //game loop
 function animate() {
   requestAnimationFrame(animate);
+
+  // Rotate the sphere based on the mouse position
+  object.rotation.z = mouseX * Math.PI;
+  object.rotation.x = mouseY * Math.PI;
   object.rotation.y += 0.05;
 
-  /*
-  torus.rotation.x += 0.0;
-  torus.rotation.y += 0.05;
-  torus.rotation.z += 0.0;
-  */
+  updateCamera();
 
   controls.update();
 
